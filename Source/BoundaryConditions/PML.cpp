@@ -25,12 +25,17 @@ namespace
         int slo = sigma.m_lo;
         int sslo = sigma_star.m_lo;
 
+        Real assumed_v = 1.;
+        ParmParse pp("warpx");
+        pp.query("pml_assumed_v", assumed_v);
+        assumed_v *= PhysConst::c;
+
         for (int i = olo; i <= ohi+1; ++i)
         {
             Real offset = static_cast<Real>(glo-i);
             sigma[i-slo] = fac*(offset*offset);
             // sigma_cumsum is the analytical integral of sigma function at same points than sigma
-            sigma_cumsum[i-slo] = (fac*(offset*offset*offset)/3.)/PhysConst::c;
+            sigma_cumsum[i-slo] = (fac*(offset*offset*offset)/3.)/assumed_v;
         }
 
         for (int i = olo; i <= ohi; ++i)
@@ -38,7 +43,7 @@ namespace
             Real offset = static_cast<Real>(glo-i) - 0.5;
             sigma_star[i-sslo] = fac*(offset*offset);
             // sigma_star_cumsum is the analytical integral of sigma function at same points than sigma_star
-            sigma_star_cumsum[i-sslo] = (fac*(offset*offset*offset)/3.)/PhysConst::c;
+            sigma_star_cumsum[i-sslo] = (fac*(offset*offset*offset)/3.)/assumed_v;
         }
     }
 
