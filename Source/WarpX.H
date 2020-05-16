@@ -731,7 +731,7 @@ private:
 
     int regrid_int = -1;
 
-    amrex::Real cfl = 0.7;
+    amrex::Real cfl = 0.99;
 
     std::string restart_chkfile;
 
