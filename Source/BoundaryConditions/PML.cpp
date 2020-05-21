@@ -911,12 +911,18 @@ PML::FillBoundaryE (PatchType patch_type)
         const auto& period = m_geom->periodicity();
         Vector<MultiFab*> mf{pml_E_fp[0].get(),pml_E_fp[1].get(),pml_E_fp[2].get()};
         amrex::FillBoundary(mf, period);
+        for (int comp=0; comp<3; comp++) {
+          pml_E_fp[comp]->OverrideSync(period);
+        }
     }
     else if (patch_type == PatchType::coarse && pml_E_cp[0] && pml_E_cp[0]->nGrowVect().max() > 0)
     {
         const auto& period = m_cgeom->periodicity();
         Vector<MultiFab*> mf{pml_E_cp[0].get(),pml_E_cp[1].get(),pml_E_cp[2].get()};
         amrex::FillBoundary(mf, period);
+        for (int comp=0; comp<3; comp++) {
+          pml_E_cp[comp]->OverrideSync(period);
+        }
     }
 }
 
@@ -935,12 +941,18 @@ PML::FillBoundaryB (PatchType patch_type)
         const auto& period = m_geom->periodicity();
         Vector<MultiFab*> mf{pml_B_fp[0].get(),pml_B_fp[1].get(),pml_B_fp[2].get()};
         amrex::FillBoundary(mf, period);
+        for (int comp=0; comp<3; comp++) {
+          pml_B_fp[comp]->OverrideSync(period);
+        }        
     }
     else if (patch_type == PatchType::coarse && pml_B_cp[0])
     {
         const auto& period = m_cgeom->periodicity();
         Vector<MultiFab*> mf{pml_B_cp[0].get(),pml_B_cp[1].get(),pml_B_cp[2].get()};
         amrex::FillBoundary(mf, period);
+        for (int comp=0; comp<3; comp++) {
+          pml_B_cp[comp]->OverrideSync(period);
+        }
     }
 }
 
@@ -958,11 +970,13 @@ PML::FillBoundaryF (PatchType patch_type)
     {
         const auto& period = m_geom->periodicity();
         pml_F_fp->FillBoundary(period);
+        pml_F_fp->OverrideSync(period);
     }
     else if (patch_type == PatchType::coarse && pml_F_cp && pml_F_cp->nGrowVect().max() > 0)
     {
         const auto& period = m_cgeom->periodicity();
         pml_F_cp->FillBoundary(period);
+        pml_F_cp->OverrideSync(period);        
     }
 }
 
