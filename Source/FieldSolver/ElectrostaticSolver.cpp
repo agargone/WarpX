@@ -7,7 +7,11 @@
 
 #include <AMReX_ParallelDescriptor.H>
 #include <AMReX_MLMG.H>
-#include <AMReX_MLNodeTensorLaplacian.H>
+#ifdef WARPX_DIM_RZ
+#   include <AMReX_MLNodeLaplacian.H>
+#else
+#   include <AMReX_MLNodeTensorLaplacian.H>
+#endif
 #include <AMReX_REAL.H>
 
 #include <WarpX.H>
@@ -172,23 +176,33 @@ WarpX::computePhi (const amrex::Vector<std::unique_ptr<amrex::MultiFab> >& rho,
         }
     }
 
-    // Define the linear operator (Poisson operator)
+// Define the linear operator (Poisson operator)
+#ifdef WARPX_DIM_RZ
+    // TODO: Take into account relativistic effects
+    MLNodeLaplacian linop( Geom(), boxArray(), DistributionMap() );
+    // TODO: Set the sigma for this solver
+#else
     MLNodeTensorLaplacian linop( Geom(), boxArray(), DistributionMap() );
-    linop.setDomainBC( lobc, hibc );
     // Set the value of beta
     amrex::Array<amrex::Real,AMREX_SPACEDIM> beta_solver =
-#if (AMREX_SPACEDIM==2)
+#   if (AMREX_SPACEDIM==2)
         {{ beta[0], beta[2] }};  // beta_x and beta_z
-#else
+#   else
         {{ beta[0], beta[1], beta[2] }};
-#endif
+#   endif
     linop.setBeta( beta_solver );
+#endif
+    linop.setDomainBC( lobc, hibc );
+
+    // TODO: Multiply rho by r
 
     // Solve the Poisson equation
     MLMG mlmg(linop);
     mlmg.setVerbose(2);
     mlmg.setMaxIter(max_iters);
     mlmg.solve( GetVecOfPtrs(phi), GetVecOfConstPtrs(rho), required_precision, 0.0);
+
+    // TODO: Divide rho and phi by r
 
     // Normalize by the correct physical constant
     for (int lev=0; lev < rho.size(); lev++){
