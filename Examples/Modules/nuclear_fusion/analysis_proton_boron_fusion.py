@@ -66,7 +66,8 @@ keV_to_Joule = scc.e*1e3
 MeV_to_Joule = scc.e*1e6
 barn_to_square_meter = 1.e-28
 m_p = scc.m_p # Proton mass
-m_b = 10.9298*m_p # Boron 11 mass
+m_u = scc.m_u # Atomic mass unit
+m_b = 11.00930536*m_u # Boron 11 mass
 m_reduced = m_p*m_b/(m_p+m_b)
 m_a = 3.97369*m_p # Alpha mass
 m_be = 7.94748*m_p # Beryllium 8 mass
@@ -477,6 +478,10 @@ def check_initial_energy1(data, E_com):
         ## Energy of alphas3 (here, fifth macroparticle of each fusion event) in the slice
         energy_alpha3_simulation = energy_alpha_slice[4::6]
 
+        print('Sim:', energy_alpha1_simulation )
+        print('Theory:', energy_alpha1_theory )
+        i = np.argmax(abs(energy_alpha1_simulation - energy_alpha1_theory))
+        print( energy_alpha1_simulation[i] )
         assert(np.all(is_close(energy_alpha1_simulation, energy_alpha1_theory, rtol=5.e-8)))
         assert(is_close(np.amax(energy_alpha2_simulation), max_energy_alpha23, rtol=1.e-2))
         assert(is_close(np.amin(energy_alpha2_simulation), min_energy_alpha23, rtol=1.e-2))
