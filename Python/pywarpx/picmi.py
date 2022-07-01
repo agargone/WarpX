@@ -1332,10 +1332,10 @@ class ParticleDiagnostic(picmistandard.PICMI_ParticleDiagnostic):
             self.diagnostic = pywarpx.diagnostics._diagnostics_dict[self.name]
         except KeyError:
             self.diagnostic = pywarpx.Diagnostics.Diagnostic(self.name, _species_dict={})
+            self.diagnostic.fields_to_plot = 'none'
             pywarpx.diagnostics._diagnostics_dict[self.name] = self.diagnostic
 
         self.diagnostic.diag_type = 'Full'
-        self.diagnostic.fields_to_plot = 'none'
         self.diagnostic.format = self.format
         self.diagnostic.openpmd_backend = self.openpmd_backend
         self.diagnostic.file_min_digits = self.file_min_digits
