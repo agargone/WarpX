@@ -21,7 +21,7 @@ boundary.field_hi = periodic periodic periodic
 #################################
 warpx.serialize_initial_conditions = 1
 warpx.verbose = 1
-warpx.cfl = 1.0
+warpx.cfl = 0.3
 
 # Order of particle shape factors
 algo.particle_shape = 1
@@ -34,20 +34,19 @@ particles.species_names = electron ion
 electron.charge = -q_e
 electron.mass = m_e
 electron.injection_style = "NRandomPerCell"
-electron.num_particles_per_cell = 200
+electron.num_particles_per_cell = 400
 electron.profile = constant
 electron.density = 1.0e21
 electron.momentum_distribution_type = "gaussian"
 electron.ux_th = 0.044237441120300
 electron.uy_th = 0.044237441120300
 electron.uz_th = 0.044237441120300
-electron.ux_m  = 0.044237441120300
 electron.do_not_deposit = 1
 
 ion.charge = q_e
 ion.mass = 4.554691780000000e-30
 ion.injection_style = "NRandomPerCell"
-ion.num_particles_per_cell = 200
+ion.num_particles_per_cell = 400
 ion.profile = constant
 ion.density = 1.0e21
 ion.momentum_distribution_type = "gaussian"
@@ -74,6 +73,7 @@ collision3.ndt = 10
 diagnostics.diags_names = diag1 diag_parser_filter diag_uniform_filter diag_random_filter
 diag1.intervals = 10
 diag1.diag_type = Full
+diag1.format = openpmd
 
 ## diag_parser_filter is a diag used to test the particle filter function.
 diag_parser_filter.intervals = 150:150:
