@@ -72,7 +72,7 @@ if re.search('tritium', warpx_used_inputs):
 else:
     # else, this is the D+D test
     reaction_type = 'DD'
-    reactant_species = ['deuterium', 'hydrogen2']
+    reactant_species = ['deuterium']
     product_species = ['helium3', 'neutron']
     ntests = 1
     E_fusion = 3.268911e6*MeV_to_Joule
@@ -140,24 +140,28 @@ def add_species_to_dict(yt_ad, data_dict, species_name, prefix, suffix):
 
 def check_particle_number_conservation(data):
     # Check consumption of reactants
-    total_w_reactant1_start = np.sum(data[reactant_species[0] + "_w_start"])
-    total_w_reactant1_end   = np.sum(data[reactant_species[0] + "_w_end"])
-    total_w_reactant2_start = np.sum(data[reactant_species[1] + "_w_start"])
-    total_w_reactant2_end   = np.sum(data[reactant_species[1] + "_w_end"])
-    consumed_reactant1 = total_w_reactant1_start - total_w_reactant1_end
-    consumed_reactant2 = total_w_reactant2_start - total_w_reactant2_end
-    assert(consumed_reactant1 >= 0.)
-    assert(consumed_reactant2 >= 0.)
+    total_w_reactant_start = {}
+    total_w_reactant_end = {}
+    consumed_reactant = {}
+    for species_name in reactant_species:
+        total_w_reactant_start[species_name] = np.sum(data[species_name + "_w_start"])
+        total_w_reactant_end[species_name] = np.sum(data[species_name + "_w_end"])
+        consumed_reactant[species_name] = total_w_reactant_start[species_name] - total_w_reactant_end[species_name]
+        assert consumed_reactant[species_name] >= 0
     ## Check that number of consumed reactants are equal
-    assert_scale = max(total_w_reactant1_start, total_w_reactant2_start)
-    assert(is_close(consumed_reactant1, consumed_reactant2, rtol = 0., atol = default_tol*assert_scale))
+    assert_scale = max(total_w_reactant_start.values())
+    for species_name in reactant_species:
+        assert(is_close(consumed_reactant[species_name],
+                        consumed_reactant[reactant_species[0]],
+                        rtol = 0., atol = default_tol*assert_scale))
 
     # That the number of products corresponds consumed particles
     for species_name in product_species:
         created_product = np.sum(data[species_name + "_w_end"])
         assert(created_product >= 0.)
-        assert(is_close(total_w_reactant1_start, total_w_reactant1_end + created_product))
-        assert(is_close(total_w_reactant2_start, total_w_reactant2_end + created_product))
+        for species_name2 in reactant_species:
+            assert(is_close(total_w_reactant_start[species_name2],
+                            total_w_reactant_end[species_name2] + created_product))
 
 def compute_energy_array(data, species_name, suffix, m):
     ## Relativistic computation of kinetic energy for a given species
