@@ -147,6 +147,7 @@ def check_particle_number_conservation(data):
         total_w_reactant_start[species_name] = np.sum(data[species_name + "_w_start"])
         total_w_reactant_end[species_name] = np.sum(data[species_name + "_w_end"])
         consumed_reactant[species_name] = total_w_reactant_start[species_name] - total_w_reactant_end[species_name]
+        print( species_name, consumed_reactant[species_name], total_w_reactant_start[species_name] )
         assert consumed_reactant[species_name] >= 0
     ## Check that number of consumed reactants are equal
     assert_scale = max(total_w_reactant_start.values())
@@ -321,6 +322,8 @@ def check_macroparticle_number(data, fusion_probability_target_value, num_pair_p
     expected_macroparticle_number = 2*expected_fusion_number
     std_macroparticle_number = 2*np.sqrt(expected_fusion_number)
     actual_macroparticle_number = data[product_species[0] + "_w_end"].shape[0]
+    print( 'actual', actual_macroparticle_number)
+    print( 'expected', expected_macroparticle_number)
     # 5 sigma test that has an intrinsic probability to fail of 1 over ~2 millions
     assert(is_close(actual_macroparticle_number, expected_macroparticle_number, rtol = 0.,
                     atol = 5.*std_macroparticle_number))
