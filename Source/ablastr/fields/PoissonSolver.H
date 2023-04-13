@@ -264,6 +264,9 @@ computePhi (amrex::Vector<amrex::MultiFab*> const & rho,
         // Solve Poisson equation at lev
         mlmg.solve( {phi[lev]}, {rho[lev]},
                     relative_tolerance, absolute_tolerance );
+        // Solve Poisson equation at lev
+        mlmg.solve( {phi[lev]}, {rho[lev]},
+                    relative_tolerance, absolute_tolerance );
 
         // needed for solving the levels by levels:
         // - coarser level is initial guess for finer level

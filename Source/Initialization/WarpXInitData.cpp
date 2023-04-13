@@ -427,7 +427,7 @@ WarpX::InitData ()
     {
         // Loop through species and calculate their space-charge field
         bool const reset_fields = false; // Do not erase previous user-specified values on the grid
-        ComputeSpaceChargeField(reset_fields);
+        //        ComputeSpaceChargeField(reset_fields);
         if (electrostatic_solver_id == ElectrostaticSolverAlgo::LabFrameElectroMagnetostatic)
             ComputeMagnetostaticField();
 
